@@ -1,7 +1,3 @@
-Here's a README in markdown format to help you set up and run the automatic instrumentation Todo app:
-
----
-
 # Todo App with OpenTelemetry Automatic Instrumentation
 
 This Todo app demonstrates how to instrument a Node.js application using OpenTelemetry for tracing and sending telemetry data to an observability backend like Elastic APM.
