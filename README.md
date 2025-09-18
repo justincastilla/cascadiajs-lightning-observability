@@ -1,90 +1,169 @@
-# Todo App with OpenTelemetry Automatic Instrumentation
+# Introduction to OpenTelemetry with JavaScript
 
-This Todo app demonstrates how to instrument a Node.js application using OpenTelemetry for tracing and sending telemetry data to an observability backend like Elastic APM.
+A comprehensive hands-on tutorial demonstrating three different approaches to OpenTelemetry instrumentation in Node.js applications. Each approach is implemented as a complete todo application, allowing you to compare and understand the differences between automatic, manual, and hybrid instrumentation strategies.
 
-## Features
-- Automatic instrumentation with OpenTelemetry
-- CRUD operations for managing todos
-- Traces sent to Elastic APM or other OTEL-compatible backends
+## 🎯 Project Overview
 
----
+This repository contains three identical todo applications, each demonstrating a different OpenTelemetry instrumentation approach:
 
-## Prerequisites
+| Folder | Approach | Port | Best For |
+|--------|----------|------|----------|
+| [`automatic-instrumentation/`](./automatic-instrumentation/) | **Automatic** | 8081 | Quick setup, infrastructure monitoring |
+| [`manual-instrumentation/`](./manual-instrumentation/) | **Manual** | 8082 | Full control, custom business logic tracing |
+| [`hybrid-instrumentation/`](./hybrid-instrumentation/) | **Hybrid** | 8083 | Production apps, best of both worlds |
 
-### 1. Software Requirements
-- **Node.js**: v14 or later
-- **NPM**: v6 or later
-- **Elastic APM Server**: Hosted on Elastic Cloud or self-hosted
-- **Elasticsearch and Kibana**: For observing traces and spans
+## 🚀 Quick Start
 
-### 2. Environment Variables
-Create a `.env` file in the root directory and include the following:
-```plaintext
-PORT=8081
-indexName=todos
-ELASTICSEARCH_ENDPOINT=https://<your-elasticsearch-url>
-ELASTICSEARCH_API_KEY=<your-elasticsearch-api-key>
-APM_SERVER_URL=https://<your-apm-server-url>
-APM_API_KEY=<your-apm-api-key>
-```
+### Prerequisites
 
-Replace `<your-elasticsearch-url>`, `<your-elasticsearch-api-key>`, `<your-apm-server-url>`, and `<your-apm-api-key>` with your Elastic Cloud or self-hosted APM details.
+- **Node.js 18+**
+- **Elastic Cloud account** with APM enabled
+- **Elasticsearch cluster** for data storage
 
----
+### 1. Clone and Setup
 
-## Installation
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/justincastilla/Introduction-to-OpenTelemetry-with-JS
-   cd Introduction-to-OpenTelemetry-with-JS
-   ```
-
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
----
-
-## Usage
-
-### Start the Application with Automatic Instrumentation
-Run the app using OpenTelemetry's Node.js instrumentation loader:
 ```bash
-npm run telemetry
+git clone https://github.com/justincastilla/Introduction-to-OpenTelemetry-with-JS
+cd Introduction-to-OpenTelemetry-with-JS
 ```
 
----
+### 2. Choose Your Approach
 
-## Endpoints
+```bash
+# Automatic Instrumentation (Port 8081)
+cd automatic-instrumentation
+npm install
+# Configure .env file (see folder README)
+npm run telemetry
 
-### CRUD Operations
-| Method | Endpoint         | Description                  |
-|--------|------------------|------------------------------|
-| GET    | `/`              | Returns the home page.       |
-| GET    | `/get_todos`     | Fetch all todos.             |
-| POST   | `/add_item`      | Add a new todo item.         |
-| DELETE | `/delete/:id`    | Delete a todo by ID.         |
+# Manual Instrumentation (Port 8082)
+cd manual-instrumentation
+npm install
+# Configure .env file (see folder README)
+npm start
 
----
+# Hybrid Instrumentation (Port 8083)
+cd hybrid-instrumentation
+npm install
+# Configure .env file (see folder README)
+npm start
+```
 
-## Observability
+### 3. Compare the Approaches
 
-### OpenTelemetry Traces
-- Traces are automatically collected for HTTP requests and interactions.
-- Each trace is sent to the Elastic APM server configured in the `.env` file.
+Open multiple browser tabs to compare the applications:
+- http://localhost:8081 (Automatic)
+- http://localhost:8082 (Manual)
+- http://localhost:8083 (Hybrid)
 
-### View Traces in Kibana
-1. Open **Kibana** and navigate to **Observability > APM**.
-2. Look for your service (`todo-app`) in the **Services** tab.
-3. Explore traces, spans, and associated metrics.
+Perform the same operations in each app and observe the differences in:
+- Console output
+- Elastic APM traces
+- Span hierarchy
+- Custom attributes and events
 
----
+## 📊 What You'll Learn
 
-## Resources
+### 🤖 Automatic Instrumentation
+- **Zero-code setup** with Elastic Distribution
+- **Infrastructure-level observability** out of the box
+- **HTTP, Express, and Elasticsearch** automatic tracing
+- **Minimal performance overhead**
+- **Quick time-to-value**
 
-- [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
-- [Elastic APM Documentation](https://www.elastic.co/guide/en/apm/index.html)
+**Best for:** Getting started quickly, infrastructure monitoring, teams new to observability
 
----
+### 🎯 Manual Instrumentation
+- **Complete control** over span creation and attributes
+- **Custom business logic** tracing
+- **Detailed error handling** and exception recording
+- **Custom metrics** and events
+- **Performance optimization** through selective instrumentation
+
+**Best for:** Advanced use cases, custom business logic tracking, when you need full control
+
+### 🏗️ Hybrid Instrumentation
+- **Automatic infrastructure** tracing + **manual business logic** tracing
+- **Best of both worlds** approach
+- **Custom metrics** combined with automatic observability
+- **Production-ready** with comprehensive coverage
+- **Scalable** for complex applications
+
+**Best for:** Production applications, teams that want infrastructure observability + business insights
+
+## 🎓 Key OpenTelemetry Concepts Demonstrated
+
+### 1. Spans and Traces
+```javascript
+// Creating spans with different approaches
+const span = tracer.startSpan('operation_name', {
+  kind: SpanKind.SERVER,
+  attributes: { 'operation.type': 'business_logic' }
+});
+```
+
+### 2. Context Propagation
+```javascript
+// Ensuring spans are properly connected
+const activeContext = context.active();
+const childSpan = tracer.startSpan('child_operation', {}, activeContext);
+```
+
+### 3. Attributes and Events
+```javascript
+// Adding metadata to spans
+span.setAttributes({
+  'user.id': 'user123',
+  'operation.success': true
+});
+
+span.addEvent('Processing completed', {
+  'items.processed': 5,
+  'duration.ms': 150
+});
+```
+
+### 4. Metrics Integration
+```javascript
+// Custom metrics alongside tracing
+const counter = meter.createCounter('operations_total');
+const histogram = meter.createHistogram('operation_duration');
+
+counter.add(1, { operation: 'create_todo' });
+histogram.record(duration, { result: 'success' });
+```
+
+### 5. Error Handling
+```javascript
+// Proper error recording
+try {
+  await operation();
+  span.setStatus({ code: SpanStatusCode.OK });
+} catch (error) {
+  span.recordException(error);
+  span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+}
+```
+
+## 🔧 Environment Configuration
+
+Each approach requires environment variables for Elastic Cloud integration:
+
+```env
+# Application Configuration
+PORT=8081                    # 8081/8082/8083 for different approaches
+indexName=todos
+ELASTICSEARCH_ENDPOINT="https://your-cluster.es.region.gcp.elastic.cloud:443"
+ELASTICSEARCH_API_KEY="your_elasticsearch_api_key"
+
+# OpenTelemetry Configuration
+OTEL_SERVICE_NAME=todo-service
+OTEL_SERVICE_VERSION=0.1.0
+OTEL_ENVIRONMENT=development
+OTEL_EXPORTER_OTLP_ENDPOINT="https://your-cluster.ingest.region.gcp.elastic.cloud:443/v1/traces"
+OTEL_EXPORTER_OTLP_HEADERS="ApiKey your_elasticsearch_api_key"
+```
+
+## 🤝 Contributing
+
+Feel free to submit issues, feature requests, or pull requests to improve this tutorial. Each approach demonstrates different aspects of OpenTelemetry, and we welcome improvements to make the learning experience better.

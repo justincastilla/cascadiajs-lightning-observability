@@ -6,7 +6,9 @@ const addButton = document.querySelector('button[name="add"]');
 const addForm = document.querySelector('div[name="add-div"]');
 const addSubmitButton = document.querySelector('button[name="add-submit"]');
 
-fetch('http://localhost:8081/get_todos')
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
+
+fetch(`${API_BASE_URL}/get_todos`)
   .then(response => response.json())
   .then(data => {
     console.log(data)
@@ -38,7 +40,7 @@ fetch('http://localhost:8081/get_todos')
         event.preventDefault(); // Prevent default form submission
         let id = event.target.id
         console.log(id)
-        fetch(`http://localhost:8081/delete/${id}`, {
+        fetch(`${API_BASE_URL}/delete/${id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +73,7 @@ fetch('http://localhost:8081/get_todos')
       let description = document.querySelector('textarea[name="new_description"]').value;
       const todo = { title, description };
       console.log(todo)
-        fetch('http://localhost:8081/add_item', {
+        fetch(`${API_BASE_URL}/add_item`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
